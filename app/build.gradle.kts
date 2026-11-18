@@ -1,7 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
+
+// keystore.properties（storeFile / storePassword / keyAlias / keyPassword）不進版控；沒有時 release 不簽章
+val keystoreFile = rootProject.file("keystore.properties")
+val keystoreProps = Properties().apply { if (keystoreFile.exists()) keystoreFile.inputStream().use(::load) }
 
 android {
     namespace = "tw.bluehomewu.tappass"
@@ -13,8 +19,8 @@ android {
         applicationId = "tw.bluehomewu.tappass"
         minSdk = 30
         targetSdk = 37
-        versionCode = 6
-        versionName = "1.4.1"
+        versionCode = 7
+        versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,8 +30,20 @@ android {
         localeFilters += listOf("en", "zh-rTW", "zh-rCN")
     }
 
+    signingConfigs {
+        if (keystoreFile.exists()) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             // R8 縮減程式碼與資源；Compose 未使用的部分佔 APK 大半
             optimization {
                 enable = true

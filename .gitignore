@@ -9,3 +9,7 @@ CLAUDE.md
 .externalNativeBuild
 .cxx
 local.properties
+
+# 簽章 keystore 與密碼（敏感資料，絕不可 commit）
+keystore
+keystore.properties
