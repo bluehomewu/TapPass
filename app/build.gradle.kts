@@ -13,10 +13,15 @@ android {
         applicationId = "tw.bluehomewu.tappass"
         minSdk = 30
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // 支援的語系，需與 res/values-* 保持一致。
+    androidResources {
+        localeFilters += listOf("en", "zh-rTW", "zh-rCN")
     }
 
     buildTypes {

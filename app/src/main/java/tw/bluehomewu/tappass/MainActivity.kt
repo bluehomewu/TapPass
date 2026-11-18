@@ -1,47 +1,138 @@
 package tw.bluehomewu.tappass
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import tw.bluehomewu.tappass.ui.theme.TapPassTheme
+import java.text.DateFormat
+import java.util.Date
 
+/** 診斷頁：檢查目標套件與 Activity 的狀態，並可手動測試啟動。 */
 class MainActivity : ComponentActivity() {
+
+    private data class Status(
+        val versionName: String?,
+        val versionCode: Long,
+        val resolvable: Boolean,
+        /** null 表示查不到 ActivityInfo。 */
+        val exported: Boolean?,
+        val lastError: Pair<String, Long>?,
+    )
+
+    private var status by mutableStateOf<Status?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             TapPassTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                status?.let { DiagnosticsScreen(it) }
+            }
+        }
+    }
+
+    // 從卡片頁或設定返回時重新檢查，狀態可能已改變
+    override fun onResume() {
+        super.onResume()
+        status = readStatus()
+    }
+
+    private fun readStatus(): Status {
+        val pm = packageManager
+        val info = try {
+            pm.getPackageInfo(AccessCard.PACKAGE, 0)
+        } catch (_: PackageManager.NameNotFoundException) {
+            null
+        }
+        val exported = try {
+            pm.getActivityInfo(AccessCard.COMPONENT, 0).exported
+        } catch (_: PackageManager.NameNotFoundException) {
+            null
+        }
+        return Status(
+            versionName = info?.versionName,
+            versionCode = info?.longVersionCode ?: 0L,
+            resolvable = pm.resolveActivity(AccessCard.intent(), 0) != null,
+            exported = exported,
+            lastError = AccessCard.lastError(this),
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun DiagnosticsScreen(s: Status) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = { TopAppBar(title = { Text(stringResource(R.string.diag_title)) }) },
+        ) { innerPadding ->
+            Column(
+                Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Row(
+                    stringResource(R.string.diag_package, AccessCard.PACKAGE),
+                    if (s.versionName != null) {
+                        stringResource(R.string.diag_installed, s.versionName, s.versionCode)
+                    } else {
+                        stringResource(R.string.diag_not_installed)
+                    },
+                )
+                Row(stringResource(R.string.diag_resolvable), yesNo(s.resolvable))
+                Row(stringResource(R.string.diag_exported), yesNo(s.exported))
+                Row(
+                    stringResource(R.string.diag_last_error),
+                    s.lastError?.let { (message, time) ->
+                        DateFormat.getDateTimeInstance().format(Date(time)) + "\n" + message
+                    } ?: stringResource(R.string.diag_none),
+                )
+                Button(
+                    onClick = { if (AccessCard.launch(this@MainActivity) != null) status = readStatus() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Text(stringResource(R.string.diag_test_launch))
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TapPassTheme {
-        Greeting("Android")
+    @Composable
+    private fun Row(label: String, value: String) {
+        ListItem(
+            headlineContent = { Text(label) },
+            supportingContent = { Text(value) },
+        )
     }
+
+    @Composable
+    private fun yesNo(value: Boolean?): String = stringResource(
+        when (value) {
+            true -> R.string.diag_yes
+            false -> R.string.diag_no
+            null -> R.string.diag_unknown
+        }
+    )
 }
