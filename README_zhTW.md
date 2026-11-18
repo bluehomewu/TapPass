@@ -80,3 +80,11 @@ extras    lb_from = "5"   (String)
 ## 作者
 
 **Edward Wu** · [GitHub @bluehomewu](https://github.com/bluehomewu)
+
+## 授權
+
+Copyright 2026 Edward Wu
+
+本專案採用 [Apache License 2.0](LICENSE) 授權。
+
+「關於」區塊中的 GitHub 標誌取自 [Octicons](https://github.com/primer/octicons)（MIT License）。

@@ -80,3 +80,11 @@ After a system update, the target may change. If that happens, TapPass needs an 
 ## Author
 
 **Edward Wu** · [GitHub @bluehomewu](https://github.com/bluehomewu)
+
+## License
+
+Copyright 2026 Edward Wu
+
+Licensed under the [Apache License 2.0](LICENSE).
+
+The GitHub mark in the About section comes from [Octicons](https://github.com/primer/octicons) (MIT License).
