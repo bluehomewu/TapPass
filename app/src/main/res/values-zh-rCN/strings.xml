@@ -16,4 +16,11 @@
 
     <!-- 跳板 -->
     <string name="launch_failed">无法打开门禁卡：%1$s</string>
+
+    <!-- 關於 -->
+    <string name="about_title">关于</string>
+    <string name="about_version">版本</string>
+    <string name="about_version_value">%1$s（%2$d）</string>
+    <string name="about_author">作者</string>
+    <string name="about_github">GitHub 个人主页</string>
 </resources>

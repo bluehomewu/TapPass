@@ -13,7 +13,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import tw.bluehomewu.tappass.ui.theme.TapPassTheme
@@ -40,6 +46,10 @@ class MainActivity : ComponentActivity() {
         val exported: Boolean?,
         val lastError: Pair<String, Long>?,
     )
+
+    private companion object {
+        const val GITHUB_URL = "https://github.com/bluehomewu"
+    }
 
     private var status by mutableStateOf<Status?>(null)
 
@@ -124,8 +134,39 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Text(stringResource(R.string.diag_test_launch))
                 }
+                AboutSection()
             }
         }
+    }
+
+    @Composable
+    private fun AboutSection() {
+        // 自己的套件一定查得到
+        val self = packageManager.getPackageInfo(packageName, 0)
+        val uriHandler = LocalUriHandler.current
+        HorizontalDivider()
+        Text(
+            stringResource(R.string.about_title),
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Row(
+            stringResource(R.string.about_version),
+            stringResource(R.string.about_version_value, self.versionName.orEmpty(), self.longVersionCode),
+        )
+        Row(
+            stringResource(R.string.about_author),
+            stringResource(R.string.author_name),
+            trailing = {
+                IconButton(onClick = { uriHandler.openUri(GITHUB_URL) }) {
+                    Icon(
+                        painterResource(R.drawable.ic_github),
+                        contentDescription = stringResource(R.string.about_github),
+                    )
+                }
+            },
+        )
     }
 
     @Composable
