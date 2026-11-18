@@ -13,8 +13,8 @@ android {
         applicationId = "tw.bluehomewu.tappass"
         minSdk = 30
         targetSdk = 37
-        versionCode = 5
-        versionName = "1.4.0"
+        versionCode = 6
+        versionName = "1.4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,8 +26,9 @@ android {
 
     buildTypes {
         release {
+            // R8 縮減程式碼與資源；Compose 未使用的部分佔 APK 大半
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
