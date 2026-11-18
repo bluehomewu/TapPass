@@ -12,4 +12,7 @@
     <string name="diag_yes">是</string>
     <string name="diag_no">否</string>
     <string name="diag_unknown">未知</string>
+
+    <!-- 跳板 -->
+    <string name="launch_failed">无法打开门禁卡：%1$s</string>
 </resources>

@@ -14,4 +14,7 @@
     <string name="diag_yes">Yes</string>
     <string name="diag_no">No</string>
     <string name="diag_unknown">Unknown</string>
+
+    <!-- 跳板 -->
+    <string name="launch_failed">Can\'t open Access Card: %1$s</string>
 </resources>

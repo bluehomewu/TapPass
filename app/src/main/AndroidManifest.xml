@@ -16,17 +16,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TapPass">
+        <!-- 唯一的 LAUNCHER（快捷操作按鍵只列 LAUNCHER）；空 taskAffinity 避免把背景的診斷頁帶到前景 -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LaunchActivity"
+            android:excludeFromRecents="true"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.TapPass"
-            android:windowSoftInputMode="adjustResize">
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/diag_title"
+            android:theme="@style/Theme.TapPass"
+            android:windowSoftInputMode="adjustResize">
             <!-- 系統「應用程式資訊」頁的設定齒輪 -->
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
