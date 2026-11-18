@@ -11,6 +11,7 @@
     <string name="diag_last_error">Last error</string>
     <string name="diag_none">None</string>
     <string name="diag_test_launch">Test launch</string>
+    <string name="diag_clear">Clear</string>
     <string name="diag_yes">Yes</string>
     <string name="diag_no">No</string>
     <string name="diag_unknown">Unknown</string>

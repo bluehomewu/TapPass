@@ -53,4 +53,11 @@ object AccessCard {
         val message = prefs.getString(KEY_LAST_ERROR, null) ?: return null
         return message to prefs.getLong(KEY_LAST_ERROR_TIME, 0L)
     }
+
+    fun clearLastError(context: Context) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            .remove(KEY_LAST_ERROR)
+            .remove(KEY_LAST_ERROR_TIME)
+            .apply()
+    }
 }

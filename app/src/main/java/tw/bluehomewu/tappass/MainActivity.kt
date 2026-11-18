@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -106,6 +107,14 @@ class MainActivity : ComponentActivity() {
                     s.lastError?.let { (message, time) ->
                         DateFormat.getDateTimeInstance().format(Date(time)) + "\n" + message
                     } ?: stringResource(R.string.diag_none),
+                    trailing = if (s.lastError == null) null else {
+                        {
+                            TextButton(onClick = {
+                                AccessCard.clearLastError(this@MainActivity)
+                                status = readStatus()
+                            }) { Text(stringResource(R.string.diag_clear)) }
+                        }
+                    },
                 )
                 Button(
                     onClick = { if (AccessCard.launch(this@MainActivity) != null) status = readStatus() },
@@ -120,10 +129,11 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun Row(label: String, value: String) {
+    private fun Row(label: String, value: String, trailing: (@Composable () -> Unit)? = null) {
         ListItem(
             headlineContent = { Text(label) },
             supportingContent = { Text(value) },
+            trailingContent = trailing,
         )
     }
 

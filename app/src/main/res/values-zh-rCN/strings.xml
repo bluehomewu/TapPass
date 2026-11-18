@@ -9,6 +9,7 @@
     <string name="diag_last_error">最近一次错误</string>
     <string name="diag_none">无</string>
     <string name="diag_test_launch">测试启动</string>
+    <string name="diag_clear">清除</string>
     <string name="diag_yes">是</string>
     <string name="diag_no">否</string>
     <string name="diag_unknown">未知</string>
